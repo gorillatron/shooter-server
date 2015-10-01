@@ -9,6 +9,7 @@
   (:use [compojure.route :only [files not-found]]
         [compojure.handler :only [site]] ; form, query params decode; cookie; session, etc
         [compojure.core :only [defroutes GET POST DELETE ANY context]]
+        [shooter-server.game.router :as game-router]
         org.httpkit.server))
 
 
@@ -28,6 +29,8 @@
 
 (defroutes all-routes
    (GET "/" [] "show-landing-page yooos")
+   (context "/game" []
+     (game-router/router))
    (route/not-found "<p>Page not found.</p>")) ;; all other, return 404
 
 
