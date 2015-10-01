@@ -14,6 +14,8 @@
                  [ring/ring-devel "1.4.0"]
                  [ring/ring-core "1.4.0"]
                  [reloaded.repl "0.2.0"]
+                 [com.rpl/specter "0.7.1"]
+                 [org.clojure/data.json "0.2.6"]
                  [environ "1.0.0"]]
 
   :main ^:skip-aot shooter-server.web
