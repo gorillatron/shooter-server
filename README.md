@@ -1,3 +1,3 @@
 # shooter-server
 
-The server for a litle shoot-M-up game written with Clojure.
+The multiplayer server for a litle shoot-M-up game written in Clojure.
