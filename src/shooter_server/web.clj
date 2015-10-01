@@ -34,7 +34,7 @@
 (defrecord Server []
   component/Lifecycle
   (start [this]
-    (assoc this :server (start-server #'all-routes (or (env :port) 8080))))
+    (assoc this :server (start-server #'all-routes (int (or (env :port) 8080)))))
   (stop [this]
     (stop-server (:server this))
     (dissoc this :server)))
