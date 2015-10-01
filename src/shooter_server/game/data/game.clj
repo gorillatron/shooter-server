@@ -3,10 +3,17 @@
             [com.rpl.specter :refer [select transform]])
   (:use [clojure.data.json :only [write-str read-str]]))
 
+(defprotocol Validatable
+  (validate [this] "validate the object"))
 
 (defrecord Game [players])
 
-(defrecord Player [name socket])
+(defrecord Player [name socket]
+  Validatable
+  (validate [this]
+    (if (< (count (:name this)) 3)
+      {:errors [{:message "name must be more than 3 characters long"}]}
+      nil)))
 
 (extend-protocol compojure.response/Renderable
   Game
