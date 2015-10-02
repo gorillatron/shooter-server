@@ -1,16 +1,17 @@
 (ns shooter-server.game.router
   (:require [ring.util.response :as response]
             [shooter-server.game.data.game :as game]
-            [org.httpkit.server :refer [with-channel on-close on-receive close]])
+            [org.httpkit.server :refer [with-channel on-close on-receive close send!]])
   (:use [compojure.core :only [routes GET POST DELETE ANY context]]
         [clojure.data.json :only [write-str read-str]]))
 
 
-(def socket "s")
-
-
 (defn handle-socket-command [data socket]
-  (println data socket))
+  (do
+    (case (:update data)
+      "player-change" (game/handle-player-change (:player data))
+      "bullet-fired" (game/handle-bullet-fired (:bullet data))
+      (println "unhandeled" data))))
 
 
 (defn router []
