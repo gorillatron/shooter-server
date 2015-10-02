@@ -10,7 +10,7 @@
 
 (defrecord Game [players])
 
-(defrecord Player [name socket]
+(defrecord Player [name]
   Validatable
   (validate [this]
     (if (< (count (:name this)) 3)
@@ -24,24 +24,37 @@
       (-> (response/response body)
           (response/content-type "text/html; charset=utf-8")))))
 
+(def sockets (atom {}))
 (def game (atom (->Game {})))
 
 (defn state [] @game)
 
-(defn player-join-game [player]
+
+(defn player-join-game [player socket]
   (let [player-name (:name player)]
-    (swap! game assoc-in [:players player-name] player)))
+    (do
+      (swap! game assoc-in [:players player-name] player)
+      (swap! sockets assoc (:name player) socket))))
+
 
 (defn player-leave-game [player]
   (let [player-name (:name player)]
-    (swap! game update :players dissoc player-name)))
+    (do
+      (swap! game update :players dissoc player-name)
+      (swap! sockets dissoc (:name player)))))
+
 
 (defn broadcast-except [except-player event-name data]
   (doseq [player (vals (:players (state)))]
-    (println (:name except-player) (:name player))
-    (if (not= (:name except-player) (:name player))
-      (send! (:socket player) (write-str {:name event-name
-                                          :data data})))))
+    (let [socket (get @sockets (:name player))]
+      (do
+        (println socket)
+        (if (and (not= (:name except-player) (:name player))
+                 (not (nil? socket)))
+          (send! socket (write-str {:name event-name
+                                    :data data})))))))
+
+
 
 (defn handle-player-change [player]
   (let [player-name (:name player)]

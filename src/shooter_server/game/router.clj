@@ -24,14 +24,14 @@
            (with-channel
              req socket
              (let [{{player-name :player-name} :params} req
-                   player (game/->Player player-name socket)
+                   player (game/->Player player-name)
                    validation-error (.validate player)]
                (if validation-error
                  (do
                    (println validation-error)
                    (close socket))
                  (do
-                   (game/player-join-game player)
+                   (game/player-join-game player socket)
                    (on-close socket
                              (fn [status]
                                (game/player-leave-game player)))
